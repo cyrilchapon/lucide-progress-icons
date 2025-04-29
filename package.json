@@ -20,5 +20,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@changesets/cli": "^2.29.2",
+    "add": "^2.0.6",
+    "yarn": "^1.22.22"
+  }
 }
