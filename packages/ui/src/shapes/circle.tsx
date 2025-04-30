@@ -1,10 +1,7 @@
 import { IconNode } from "lucide-react";
 import { useMemo } from "react";
 import { pointInCircle } from "../use-progress-position";
-
-export type IconNodePart = IconNode[number];
-
-const baseInnerRadius = 6.5
+import { basePieSvgAttrs, checkIconNodePart, IconNodePart, baseInnerRadius } from "./common";
 
 export const circleIconNodePart: IconNodePart = [
   "circle",
@@ -23,11 +20,6 @@ export const fullDiscIconNodePart: IconNodePart = [
   },
 ];
 
-export const checkIconNodePart: IconNodePart = [
-  "path",
-  { d: "m9 12 2 2 4-4", key: "dzmm74" },
-];
-
 export const circleFullDiscIconNode: IconNode = [
   circleIconNodePart,
   fullDiscIconNodePart,
@@ -39,13 +31,13 @@ export const circleFullDiscCheckIconNode: IconNode = [
   checkIconNodePart,
 ];
 
-export const basePieSvgAttrs: Record<string, string> = {
-  fill: "currentColor",
-  strokeWidth: "0",
-  strokeLinecap: "butt",
-};
-
-export const getPieIconNodePart = (progress: number, key: string, cx: number, cy: number, r: number) => {
+export const getPieIconNodePart = (
+  progress: number,
+  key: string,
+  cx: number,
+  cy: number,
+  r: number
+) => {
   const [x, y] = pointInCircle(
     {
       center: [cx, cy],
@@ -60,7 +52,7 @@ export const getPieIconNodePart = (progress: number, key: string, cx: number, cy
     {
       // This is a working base with 25%
       // 'M12,12 L12,6 A6,6 0 0 1 18,12 Z'
-      d: `M12,12 L12,${12-r} A${r},${r} 0 ${largeArc} 1 ${x},${y} Z`,
+      d: `M12,12 L12,${12 - r} A${r},${r} 0 ${largeArc} 1 ${x},${y} Z`,
       ...basePieSvgAttrs,
       key,
     },
