@@ -1,12 +1,4 @@
-import { IconNode } from "lucide-react";
-import { checkIconNodePart, IconNodePart } from "./common";
-import {
-  getFullPolygonIconNodePart,
-  makeUsePolygonProgressIconNode,
-} from "./polygon";
-import { boundPolygon, GeoCircle } from "../use-progress-position";
-
-const box: GeoCircle = { center: [12, 11.75], radius: 6 };
+import { IconNodePart } from "./common";
 
 export const pentagonIconNodePart: IconNodePart = [
   "path",
@@ -15,29 +7,3 @@ export const pentagonIconNodePart: IconNodePart = [
     key: "2hea0t",
   },
 ];
-
-export const basePentagonPolygon = boundPolygon(box, 5);
-export const fullPentagonIconNodePart = getFullPolygonIconNodePart(
-  basePentagonPolygon,
-  box.radius,
-  box.center,
-  "ln8ssz"
-);
-
-export const pentagonFullDiscIconNode: IconNode = [
-  pentagonIconNodePart,
-  fullPentagonIconNodePart,
-];
-
-export const pentagonFullDiscCheckIconNode: IconNode = [
-  pentagonIconNodePart,
-  fullPentagonIconNodePart,
-  checkIconNodePart,
-];
-
-export const usePentagonProgressIconNode = makeUsePolygonProgressIconNode(
-  5,
-  box.center,
-  box.radius,
-  pentagonIconNodePart
-);

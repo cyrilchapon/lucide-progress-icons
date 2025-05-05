@@ -5,6 +5,18 @@ export type DemoGroupProps = ComponentProps<"div"> & {
   title: string;
 };
 
+export const DemoCategory = ({
+  title,
+  className,
+  children,
+  ...props
+}: DemoGroupProps) => (
+  <div className={cn("flex flex-col gap-2", className)} {...props}>
+    <h2 className="text-xl font-medium">{title}</h2>
+    <div className="flex flex-col gap-8">{children}</div>
+  </div>
+);
+
 export const DemoGroup = ({
   title,
   className,

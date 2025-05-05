@@ -1,12 +1,4 @@
-import { IconNode } from "lucide-react";
-import { checkIconNodePart, IconNodePart } from "./common";
-import {
-  getFullPolygonIconNodePart,
-  makeUsePolygonProgressIconNode,
-} from "./polygon";
-import { boundPolygon, GeoCircle } from "../use-progress-position";
-
-const box: GeoCircle = { center: [12, 12], radius: 6.5 };
+import { IconNodePart } from "./common";
 
 export const diamondIconNodePart: IconNodePart = [
   "path",
@@ -15,29 +7,3 @@ export const diamondIconNodePart: IconNodePart = [
     key: "1f1r0c",
   },
 ];
-
-export const baseDiamondPolygon = boundPolygon(box, 4);
-export const fullDiamondIconNodePart = getFullPolygonIconNodePart(
-  baseDiamondPolygon,
-  box.radius,
-  box.center,
-  "ln8ssz"
-);
-
-export const diamondFullDiscIconNode: IconNode = [
-  diamondIconNodePart,
-  fullDiamondIconNodePart,
-];
-
-export const diamondFullDiscCheckIconNode: IconNode = [
-  diamondIconNodePart,
-  fullDiamondIconNodePart,
-  checkIconNodePart,
-];
-
-export const useDiamondProgressIconNode = makeUsePolygonProgressIconNode(
-  4,
-  box.center,
-  box.radius,
-  diamondIconNodePart
-);

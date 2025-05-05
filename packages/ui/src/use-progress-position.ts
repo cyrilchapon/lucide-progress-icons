@@ -8,6 +8,24 @@ export type GeoSquare = [GeoPoint, GeoPoint, GeoPoint, GeoPoint];
 export type GeoTriangle = [GeoPoint, GeoPoint, GeoPoint];
 export type GeoCircle = { center: GeoPoint; radius: number };
 
+export const getSquareCircle = (square: GeoSquare): GeoCircle => {
+  const xs = square.map((p) => p[0]);
+  const ys = square.map((p) => p[1]);
+
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+
+  const xCenter = minX + (maxX - minX) / 2;
+  const yCenter = minY + (maxY - minY) / 2;
+
+  return {
+    center: [xCenter, yCenter],
+    radius: maxX - xCenter,
+  };
+};
+
 export const progressInRange = (
   [start, end]: [start: number, end: number],
   progress: number
@@ -27,7 +45,7 @@ export const pointInSegment = (
 
 export const boundPolygon = (
   baseCircle: GeoCircle,
-  sides: number,
+  sides: number
 ): GeoPolygon => {
   const {
     radius: baseRadius,

@@ -1,51 +1,119 @@
-import { Circle, Icon, LucideIcon, LucideProps } from "lucide-react";
-import { forwardRef } from "react";
+import { Icon, LucideIcon, LucideProps } from "lucide-react";
+import { forwardRef, useId, useMemo } from "react";
 import { useNormalizeProgress } from "../use-normalized-progress";
-import {
-  useCircleProgressIconNode,
-  circleFullDiscIconNode,
-  circleFullDiscCheckIconNode,
-} from "../shapes/circle";
 import { cn } from "../util";
+import { PieProgressClippingPath } from "./progress-clipping-path/pie";
+import { LinearProgressClippingPath } from "./progress-clipping-path/linear";
+import {
+  useShapeProgressIconNode,
+  baseShapeIconNodeParts,
+  IconShape,
+  shapeLinearProgressRotationDefault,
+} from "../shapes";
 
-export type RawProgressCircleProps = LucideProps & {
+export const progressIconFillStrategies = ["pie", "linear"] as const;
+export type ProgressIconFillStrategy =
+  (typeof progressIconFillStrategies)[number];
+
+export type RawProgressIconProps = LucideProps & {
   progress: number;
+  shape: IconShape;
+  placeholder?: boolean;
+  placeholderOpacity?: number;
+  fillStrategy: ProgressIconFillStrategy;
+  rotate?: number;
 };
 
-export const RawProgressCircle = forwardRef<
-  SVGSVGElement,
-  RawProgressCircleProps
->(({ progress, ...props }, ref) => {
-  const iconNode = useCircleProgressIconNode(progress);
+export const RawProgressIcon = forwardRef<SVGSVGElement, RawProgressIconProps>(
+  (
+    {
+      progress,
+      shape,
+      fillStrategy,
+      rotate: _rotate,
+      placeholder = false,
+      placeholderOpacity = 0.1,
+      ...props
+    },
+    ref
+  ) => {
+    const innerId = useId();
+    const clipPathId = useId();
+    const baseShapeIconNodePart = baseShapeIconNodeParts[shape];
+    const rotate =
+      _rotate ?? shapeLinearProgressRotationDefault[fillStrategy][shape];
 
+    const iconNode = useShapeProgressIconNode(
+      baseShapeIconNodePart,
+      innerId,
+      clipPathId,
+      placeholder,
+      placeholderOpacity
+    );
+
+    const ProgressClippingPath =
+      fillStrategy === "pie"
+        ? PieProgressClippingPath
+        : LinearProgressClippingPath;
+
+    return (
+      <Icon iconNode={iconNode} {...props} ref={ref}>
+        <ProgressClippingPath
+          progress={progress}
+          id={clipPathId}
+          rotate={rotate}
+          cx={12}
+          cy={12}
+        />
+      </Icon>
+    );
+  }
+);
+RawProgressIcon.displayName = "RawProgressIcon";
+
+export const FullProgressIcon = forwardRef<
+  SVGSVGElement,
+  LucideProps & { shape: IconShape; placeholder?: boolean }
+>(({ shape, placeholder = false, ...props }, ref) => {
+  const baseShapeIconNodePart = baseShapeIconNodeParts[shape];
+  const iconNode = useShapeProgressIconNode(
+    baseShapeIconNodePart,
+    undefined,
+    undefined,
+    placeholder
+  );
   return <Icon iconNode={iconNode} {...props} ref={ref} />;
 });
-RawProgressCircle.displayName = "RawProgressCircle";
+FullProgressIcon.displayName = "FullProgressIcon";
 
-export const FullProgressCircle = forwardRef<SVGSVGElement, LucideProps>(
-  (props, ref) => (
-    <Icon iconNode={circleFullDiscIconNode} {...props} ref={ref} />
-  )
-);
-FullProgressCircle.displayName = "FullProgressCircle";
+export const EmptyProgressIcon = forwardRef<
+  SVGSVGElement,
+  LucideProps & { shape: IconShape; placeholder?: boolean }
+>(({ shape, placeholder = false, ...props }, ref) => {
+  const baseShapeIconNodePart = baseShapeIconNodeParts[shape];
+  const _iconNode = useShapeProgressIconNode(
+    baseShapeIconNodePart,
+    undefined,
+    undefined,
+    placeholder
+  );
+  const iconNode = useMemo(() => _iconNode.slice(0, -1), [_iconNode]);
+  return <Icon iconNode={iconNode} {...props} ref={ref} />;
+});
+EmptyProgressIcon.displayName = "EmptyProgressIcon";
 
-export const FullProgressCircleCheck = forwardRef<SVGSVGElement, LucideProps>(
-  (props, ref) => (
-    <Icon iconNode={circleFullDiscCheckIconNode} {...props} ref={ref} />
-  )
-);
-FullProgressCircleCheck.displayName = "FullProgressCircleCheck";
-
-export type ProgressCircleProps = RawProgressCircleProps & {
+export type ProgressIconProps = RawProgressIconProps & {
   emptyIcon?: LucideIcon;
   fullIcon?: LucideIcon;
   emptyClassName?: string;
   fullClassName?: string;
 };
 
-export const ProgressCircle = forwardRef<SVGSVGElement, ProgressCircleProps>(
+export const ProgressIcon = forwardRef<SVGSVGElement, ProgressIconProps>(
   (
     {
+      shape,
+      fillStrategy,
       progress,
       emptyIcon,
       fullIcon,
@@ -56,22 +124,30 @@ export const ProgressCircle = forwardRef<SVGSVGElement, ProgressCircleProps>(
     },
     ref
   ) => {
-    const EmptyIcon = emptyIcon ?? Circle;
-    const FullIcon = fullIcon ?? FullProgressCircle;
-    const ProgressIcon = RawProgressCircle;
+    const EmptyIcon = emptyIcon ?? EmptyProgressIcon;
+    const FullIcon = fullIcon ?? FullProgressIcon;
+    const ProgressIcon = RawProgressIcon;
 
     const normalizedProgress = useNormalizeProgress(progress, 100);
 
     return normalizedProgress <= 0 ? (
       <EmptyIcon
+        shape={shape}
         {...props}
         className={cn(className, emptyClassName)}
         ref={ref}
       />
     ) : normalizedProgress >= 1 ? (
-      <FullIcon {...props} className={cn(className, fullClassName)} ref={ref} />
+      <FullIcon
+        shape={shape}
+        {...props}
+        className={cn(className, fullClassName)}
+        ref={ref}
+      />
     ) : (
       <ProgressIcon
+        shape={shape}
+        fillStrategy={fillStrategy}
         progress={normalizedProgress}
         {...props}
         className={cn(className)}
@@ -80,4 +156,4 @@ export const ProgressCircle = forwardRef<SVGSVGElement, ProgressCircleProps>(
     );
   }
 );
-ProgressCircle.displayName = "ProgressCircle";
+ProgressIcon.displayName = "ProgressIcon";

@@ -1,13 +1,13 @@
 import {
-  FullProgressCircleCheck,
-  ProgressCircle,
-  ProgressDiamond,
-  ProgressHexagon,
-  ProgressPentagon,
-  ProgressTriangle,
+  iconShapes,
+  ProgressIcon,
+  progressIconFillStrategies,
 } from "@chimanos/lucide-progress-icon";
-import { CircleDashed } from "lucide-react";
-import { DemoGroup, DemoGroupItemList } from "./components/demo-group";
+import {
+  DemoCategory,
+  DemoGroup,
+  DemoGroupItemList,
+} from "./components/demo-group";
 
 const percentagesLarge = [
   0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
@@ -20,71 +20,44 @@ const sizeClassName = "size-6 lg:size-8";
 
 export default function Home() {
   return (
-    <div className="w-dvw h-dvh flex items-center justify-center">
-      <div className="flex flex-col items-center gap-6">
-        <DemoGroup title="Precise calculation">
-          <DemoGroupItemList>
-            {percentagesLarge.map((p) => (
-              <ProgressCircle key={p} progress={p} className={sizeClassName} />
+    <div className="w-dvw h-dvh flex flex-col items-center justify-center overflow-hidden">
+      <div className="flex-1 flex flex-col items-center gap-10 p-4 overflow-scroll">
+        {progressIconFillStrategies.map((strategy) => (
+          <DemoCategory key={strategy} title={`fillStrategy="${strategy}"`}>
+            {iconShapes.map((shape) => (
+              <DemoGroup key={shape} title={`shape="${shape}"`}>
+                <DemoGroupItemList>
+                  {percentagesLess.map((p) => (
+                    <ProgressIcon
+                      key={p}
+                      shape={shape}
+                      fillStrategy={strategy}
+                      progress={p}
+                      className={sizeClassName}
+                    />
+                  ))}
+                </DemoGroupItemList>
+              </DemoGroup>
             ))}
-          </DemoGroupItemList>
-        </DemoGroup>
+          </DemoCategory>
+        ))}
 
-        <DemoGroup title="Custom full and empty">
-          <DemoGroupItemList>
-            {percentagesLess.map((p) => (
-              <ProgressCircle
-                key={p}
-                progress={p}
-                className={sizeClassName}
-                emptyIcon={CircleDashed}
-                emptyClassName="text-gray-900/70 dark:text-white/60"
-                fullIcon={FullProgressCircleCheck}
-                fullClassName="[&>*]:stroke-green-600 [&>:nth-child(2)]:fill-green-600 [&>*]:dark:stroke-green-400 [&>:nth-child(2)]:dark:fill-green-400 [&>:last-child]:stroke-gray-200 [&>:last-child]:dark:stroke-gray-800"
-              />
-            ))}
-          </DemoGroupItemList>
-        </DemoGroup>
-
-        <DemoGroup title="Precise calculation">
-          <DemoGroupItemList>
-            {percentagesLarge.map((p) => (
-              <ProgressDiamond key={p} progress={p} className={sizeClassName} />
-            ))}
-          </DemoGroupItemList>
-        </DemoGroup>
-
-        <DemoGroup title="Precise calculation">
-          <DemoGroupItemList>
-            {percentagesLarge.map((p) => (
-              <ProgressPentagon
-                key={p}
-                progress={p}
-                className={sizeClassName}
-              />
-            ))}
-          </DemoGroupItemList>
-        </DemoGroup>
-
-        <DemoGroup title="Precise calculation">
-          <DemoGroupItemList>
-            {percentagesLarge.map((p) => (
-              <ProgressHexagon key={p} progress={p} className={sizeClassName} />
-            ))}
-          </DemoGroupItemList>
-        </DemoGroup>
-
-        <DemoGroup title="Precise calculation">
-          <DemoGroupItemList>
-            {percentagesLarge.map((p) => (
-              <ProgressTriangle
-                key={p}
-                progress={p}
-                className={sizeClassName}
-              />
-            ))}
-          </DemoGroupItemList>
-        </DemoGroup>
+        <DemoCategory title="Additional features">
+          <DemoGroup title={`placeholder={true}`}>
+            <DemoGroupItemList>
+              {percentagesLess.map((p) => (
+                <ProgressIcon
+                  key={p}
+                  shape="circle"
+                  fillStrategy="pie"
+                  progress={p}
+                  placeholder
+                  className={sizeClassName}
+                />
+              ))}
+            </DemoGroupItemList>
+          </DemoGroup>
+        </DemoCategory>
       </div>
     </div>
   );
